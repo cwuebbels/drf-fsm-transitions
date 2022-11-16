@@ -1,4 +1,4 @@
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import action
 from rest_framework.response import Response
 
 
@@ -6,7 +6,7 @@ def get_transition_viewset_method(transition_name, **kwargs):
     '''
     Create a viewset method for the provided `transition_name`
     '''
-    @detail_route(methods=['post'], **kwargs)
+    @action(methods=['post'], detail=True, **kwargs)
     def inner_func(self, request, pk=None, **kwargs):
         object = self.get_object()
         transition_method = getattr(object, transition_name)
