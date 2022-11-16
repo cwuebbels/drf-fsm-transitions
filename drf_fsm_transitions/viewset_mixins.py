@@ -6,7 +6,6 @@ def get_transition_viewset_method(transition_name, **kwargs):
     '''
     Create a viewset method for the provided `transition_name`
     '''
-    @action(methods=['post'], detail=True, url_path=transition_name, **kwargs)
     def inner_func(self, request, pk=None, **kwargs):
         object = self.get_object()
         transition_method = getattr(object, transition_name)
@@ -47,7 +46,9 @@ def get_viewset_transition_action_mixin(model, field='state', **kwargs):
         setattr(
             Mixin,
             transition_name,
-            get_transition_viewset_method(transition_name, url_name=url_name, **kwargs)
+            action(methods=['POST'], detail=True, url_name=url_name, url_path=url_name)(
+                get_transition_viewset_method(transition_name, **kwargs)
+            ),
         )
 
     return Mixin
