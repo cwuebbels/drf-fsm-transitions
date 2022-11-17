@@ -28,26 +28,26 @@ def get_transition_viewset_method(transition_name, **kwargs):
     return inner_func
 
 
-def get_viewset_transition_action_mixin(model, field='state', **kwargs):
+def get_viewset_transition_action_mixin(model, field='state', transition_names=None, **kwargs):
     '''
     Find all transitions defined on `model`, then create a corresponding
     viewset action method for each and apply it to `Mixin`. Finally, return
     `Mixin`
     '''
-    instance = model()
-
     class Mixin(object):
         save_after_transition = True
 
-    transitions = getattr(instance, f'get_all_{field}_transitions')()
-    transition_names = set(x.name for x in transitions)
+    if not transition_names:
+        transitions = getattr(model(), f'get_all_{field}_transitions')()
+        transition_names = set(x.name for x in transitions)
+
     for transition_name in transition_names:
         url_name = transition_name.replace('_', '-')
         setattr(
             Mixin,
             transition_name,
-            action(methods=['POST'], detail=True, url_name=url_name, url_path=url_name)(
-                get_transition_viewset_method(transition_name, **kwargs)
+            action(methods=['POST'], detail=True, url_name=url_name, url_path=transition_name)(
+                get_transition_viewset_method(transition_name)
             ),
         )
 
