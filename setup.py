@@ -10,5 +10,5 @@ setup(
     author_email='jacob@haslehurst.net',
     url='https://github.com/hzy/drf-fsm-transitions',
     packages=find_packages(),
-    install_requires=['django', 'django_fsm', 'djangorestframework>=3.12']
+    install_requires=['django', 'django-fsm-2', 'djangorestframework>=3.12']
 )
